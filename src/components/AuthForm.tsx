@@ -29,6 +29,9 @@ export default function AuthForm({ onAuth, onNotify, onNeedVerification }: AuthF
     } else if (data.userId) {
       onNotify(data.message, 'success')
       onNeedVerification(email)
+    } else if (res.status === 403 && data.error === 'Please verify your email first') {
+      onNotify('Please verify your email first', 'error')
+      onNeedVerification(email)
     } else {
       onNotify(data.error || 'Authentication failed', 'error')
     }
