@@ -3,9 +3,10 @@ import { useState } from 'react'
 
 interface AuthFormProps {
   onAuth: (token: string) => void
+  onNotify: (message: string, type: 'success' | 'error') => void
 }
 
-export default function AuthForm({ onAuth }: AuthFormProps) {
+export default function AuthForm({ onAuth, onNotify }: AuthFormProps) {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -21,7 +22,12 @@ export default function AuthForm({ onAuth }: AuthFormProps) {
     })
     
     const data = await res.json()
-    if (data.token) onAuth(data.token)
+    if (data.token) {
+      onAuth(data.token)
+      onNotify(isLogin ? 'Login successful!' : 'Registration successful!', 'success')
+    } else {
+      onNotify(data.error || 'Authentication failed', 'error')
+    }
   }
 
   return (
