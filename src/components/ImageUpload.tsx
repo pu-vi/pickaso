@@ -3,8 +3,9 @@ import { useState } from 'react'
 
 export default function ImageUpload() {
   const [file, setFile] = useState<File | null>(null)
+  const [directory, setDirectory] = useState('uploads')
   const [uploading, setUploading] = useState(false)
-  const [uploadedUrl, setUploadedUrl] = useState('')
+  const [uploadedFile, setUploadedFile] = useState('')
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -12,18 +13,19 @@ export default function ImageUpload() {
 
     setUploading(true)
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('fileToUpload', file)
+    formData.append('directory', directory)
 
-    const endpoint = process.env.NEXT_PUBLIC_UPLOAD_ENDPOINT || '/api/upload'
-    
+    const endpoint = process.env.NEXT_PUBLIC_UPLOAD_ENDPOINT!
+
     try {
       const res = await fetch(endpoint, {
         method: 'POST',
         body: formData
       })
-      
+
       const data = await res.json()
-      if (data.url) setUploadedUrl(data.url)
+      if (data.file) setUploadedFile(data.file)
     } catch (error) {
       console.error('Upload failed:', error)
     } finally {
@@ -35,6 +37,14 @@ export default function ImageUpload() {
     <div className="space-y-4 max-w-md mx-auto">
       <h2 className="text-2xl font-bold">Upload Image</h2>
       <form onSubmit={handleUpload} className="space-y-4">
+        <input
+          type="text"
+          placeholder="Directory name"
+          value={directory}
+          onChange={(e) => setDirectory(e.target.value)}
+          className="w-full p-2 border rounded"
+          required
+        />
         <input
           type="file"
           accept="image/*"
@@ -50,10 +60,11 @@ export default function ImageUpload() {
           {uploading ? 'Uploading...' : 'Upload Image'}
         </button>
       </form>
-      {uploadedUrl && (
+      {uploadedFile && (
         <div className="mt-4">
           <p className="text-green-600">Upload successful!</p>
-          <img src={uploadedUrl} alt="Uploaded" className="max-w-full h-auto mt-2" />
+          <p className="text-sm text-gray-600">File: {uploadedFile}</p>
+          <img src={`/${uploadedFile}`} alt="Uploaded" className="max-w-full h-auto mt-2" />
         </div>
       )}
     </div>
