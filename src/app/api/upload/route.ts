@@ -1,9 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import sharp from 'sharp'
 import { randomBytes } from 'crypto'
+import jwt from 'jsonwebtoken'
 import { prisma as db } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
+  const token = request.headers.get('authorization')?.replace('Bearer ', '')
+
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  let userId: number
+  try {
+    const decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET!) as { userId: number }
+    userId = decoded.userId
+  } catch (error) {
+    console.error('Token verification error:', error)
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+  }
+
   const formData = await request.formData()
   const files = formData.getAll('images') as File[]
 
@@ -34,15 +50,12 @@ export async function POST(request: NextRequest) {
       uploadFormData.append('thumbs[]', thumbBlob, randomName)
     }
 
-    const response = await fetch(process.env.NEXT_PUBLIC_UPLOAD_ENDPOINT!, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_IMG_ENDPOINT!}/imgup.php`, {
       method: 'POST',
       body: uploadFormData
     })
 
     const data = await response.json()
-
-    // TODO: Get user from session
-    const userId = 1
 
     if (response.ok && data.uploaded) {
       for (const image of data.uploaded) {

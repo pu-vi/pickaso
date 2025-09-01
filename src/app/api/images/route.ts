@@ -1,9 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import jwt from 'jsonwebtoken'
+import { prisma as db } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
-  // TODO: Get user from session
-  const userId = 1
+  const token = request.headers.get('authorization')?.replace('Bearer ', '')
+
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  let userId: number
+  try {
+    const decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET!) as { userId: number }
+    userId = decoded.userId
+  } catch (error) {
+    console.error('Token verification error:', error)
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+  }
 
   const { searchParams } = new URL(request.url)
   const page = parseInt(searchParams.get('page') || '1', 10)

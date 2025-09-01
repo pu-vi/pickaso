@@ -4,11 +4,15 @@ import { useState, useEffect } from 'react'
 interface Image {
   id: number;
   url: string;
-  thumbnailUrl: string;
+  thumb: string;
   title: string;
 }
 
-export default function ImageUpload() {
+interface ImageUploadProps {
+  token: string
+}
+
+export default function ImageUpload({ token }: ImageUploadProps) {
   const [files, setFiles] = useState<FileList | null>(null)
   const [uploading, setUploading] = useState(false)
   const [images, setImages] = useState<Image[]>([])
@@ -17,7 +21,11 @@ export default function ImageUpload() {
 
   const fetchImages = async () => {
     try {
-      const res = await fetch(`/api/images?page=${page}`)
+      const res = await fetch(`/api/images?page=${page}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       const data = await res.json()
       setImages(data.images)
       setTotalPages(data.totalPages)
@@ -45,6 +53,9 @@ export default function ImageUpload() {
     try {
       const res = await fetch('/api/upload', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         body: formData
       })
 
@@ -83,8 +94,8 @@ export default function ImageUpload() {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
         {images.map((image) => (
           <div key={image.id} className="space-y-2">
-            <a href={image.url} target="_blank" rel="noopener noreferrer">
-              <img src={image.thumbnailUrl} alt={image.title} className="w-full h-auto" />
+            <a href={process.env.NEXT_PUBLIC_IMG_ENDPOINT + image.url} target="_blank" rel="noopener noreferrer">
+              <img src={process.env.NEXT_PUBLIC_IMG_ENDPOINT + image.thumb} alt={image.title} className="w-full h-auto" />
             </a>
             <p className="text-xs text-gray-600">{image.title}</p>
           </div>
