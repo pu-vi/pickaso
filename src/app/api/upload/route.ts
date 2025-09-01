@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import sharp from 'sharp'
 import { randomBytes } from 'crypto'
+import { prisma as db } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData()
@@ -33,22 +34,30 @@ export async function POST(request: NextRequest) {
       uploadFormData.append('thumbs[]', thumbBlob, randomName)
     }
 
-    console.log(uploadFormData);
-
     const response = await fetch(process.env.NEXT_PUBLIC_UPLOAD_ENDPOINT!, {
       method: 'POST',
       body: uploadFormData
     })
 
-    console.log(response);
-
     const data = await response.json()
 
-    console.log(data);
+    // TODO: Get user from session
+    const userId = 1
+
+    if (response.ok && data.uploaded) {
+      for (const image of data.uploaded) {
+        await db.image.create({
+          data: {
+            url: image.image,
+            thumb: image.thumb,
+            userId: userId
+          }
+        })
+      }
+    }
 
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-
     console.error('Upload error:', error)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
   }
