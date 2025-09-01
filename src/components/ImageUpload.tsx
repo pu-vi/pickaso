@@ -1,10 +1,16 @@
 'use client'
 import { useState } from 'react'
 
+interface UploadedFile {
+  thumb: string;
+  image: string;
+}
+
+
 export default function ImageUpload() {
   const [files, setFiles] = useState<FileList | null>(null)
   const [uploading, setUploading] = useState(false)
-  const [uploadedFiles, setUploadedFiles] = useState<any[]>([])
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([])
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -12,7 +18,7 @@ export default function ImageUpload() {
 
     setUploading(true)
     const formData = new FormData()
-    
+
     Array.from(files).forEach(file => {
       formData.append('images', file)
     })

@@ -12,6 +12,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
   }
 
+  if (!user.emailVerified) {
+    return NextResponse.json({ error: 'Please verify your email first' }, { status: 403 })
+  }
+
   const token = jwt.sign({ userId: user.id }, process.env.NEXTAUTH_SECRET!)
   
   return NextResponse.json({ token, user: { id: user.id, email: user.email } })
