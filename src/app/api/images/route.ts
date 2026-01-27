@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import jwt from 'jsonwebtoken'
 import { prisma as db } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
-  const token = request.headers.get('authorization')?.replace('Bearer ', '')
-
-  if (!token) {
+  const userEmail = request.headers.get('x-user-email')
+  
+  if (!userEmail) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  let userId: number
-  try {
-    const decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET!) as { userId: number }
-    userId = decoded.userId
-  } catch (error) {
-    console.error('Token verification error:', error)
-    return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
   }
 
   const { searchParams } = new URL(request.url)
@@ -26,7 +16,7 @@ export async function GET(request: NextRequest) {
   try {
     const images = await db.image.findMany({
       where: {
-        userId: userId
+        userEmail: userEmail
       },
       orderBy: {
         createdAt: 'desc'
@@ -37,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     const totalImages = await db.image.count({
       where: {
-        userId: userId
+        userEmail: userEmail
       }
     })
 

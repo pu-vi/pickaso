@@ -1,23 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import sharp from 'sharp'
 import { randomBytes } from 'crypto'
-import jwt from 'jsonwebtoken'
 import { prisma as db } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
-  const token = request.headers.get('authorization')?.replace('Bearer ', '')
-
-  if (!token) {
+  const userEmail = request.headers.get('x-user-email')
+  
+  if (!userEmail) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  let userId: number
-  try {
-    const decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET!) as { userId: number }
-    userId = decoded.userId
-  } catch (error) {
-    console.error('Token verification error:', error)
-    return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
   }
 
   const formData = await request.formData()
@@ -63,7 +53,7 @@ export async function POST(request: NextRequest) {
           data: {
             url: image.image,
             thumb: image.thumb,
-            userId: userId
+            userEmail: userEmail
           }
         })
       }

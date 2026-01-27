@@ -1,18 +1,15 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useAuthStore } from '@/store/authStore'
 
 interface Image {
   id: number;
   url: string;
   thumb: string;
-  title: string;
 }
 
-interface ImageUploadProps {
-  token: string
-}
-
-export default function ImageUpload({ token }: ImageUploadProps) {
+export default function ImageUpload() {
+  const { user } = useAuthStore()
   const [files, setFiles] = useState<FileList | null>(null)
   const [uploading, setUploading] = useState(false)
   const [images, setImages] = useState<Image[]>([])
@@ -23,7 +20,7 @@ export default function ImageUpload({ token }: ImageUploadProps) {
     try {
       const res = await fetch(`/api/images?page=${page}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'x-user-email': user?.email || ''
         }
       })
       const data = await res.json()
@@ -54,7 +51,7 @@ export default function ImageUpload({ token }: ImageUploadProps) {
       const res = await fetch('/api/upload', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'x-user-email': user?.email || ''
         },
         body: formData
       })
@@ -95,9 +92,8 @@ export default function ImageUpload({ token }: ImageUploadProps) {
         {images.map((image) => (
           <div key={image.id} className="space-y-2">
             <a href={process.env.NEXT_PUBLIC_IMG_ENDPOINT + image.url} target="_blank" rel="noopener noreferrer">
-              <img src={process.env.NEXT_PUBLIC_IMG_ENDPOINT + image.thumb} alt={image.title} className="w-full h-auto" />
+              <img src={process.env.NEXT_PUBLIC_IMG_ENDPOINT + image.thumb} alt="Image" className="w-full h-auto" />
             </a>
-            <p className="text-xs text-gray-600">{image.title}</p>
           </div>
         ))}
       </div>
