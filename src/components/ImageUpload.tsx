@@ -20,14 +20,17 @@ export default function ImageUpload() {
     try {
       const res = await fetch(`/api/images?page=${page}`, {
         headers: {
-          'x-user-email': user?.email || ''
+          'x-user-email': user?.email || '',
+          'x-user-sub': user?.sub || ''
         }
       })
       const data = await res.json()
-      setImages(data.images)
-      setTotalPages(data.totalPages)
+      setImages(data.images || [])
+      setTotalPages(data.totalPages || 1)
     } catch (error) {
       console.error('Error fetching images:', error)
+      setImages([])
+      setTotalPages(1)
     }
   }
 
@@ -51,7 +54,8 @@ export default function ImageUpload() {
       const res = await fetch('/api/upload', {
         method: 'POST',
         headers: {
-          'x-user-email': user?.email || ''
+          'x-user-email': user?.email || '',
+          'x-user-sub': user?.sub || ''
         },
         body: formData
       })
@@ -89,7 +93,7 @@ export default function ImageUpload() {
 
       <h2 className="text-2xl font-bold mt-8">Your Images</h2>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
-        {images.map((image) => (
+        {images && images.map((image) => (
           <div key={image.id} className="space-y-2">
             <a href={process.env.NEXT_PUBLIC_IMG_ENDPOINT + image.url} target="_blank" rel="noopener noreferrer">
               <img src={process.env.NEXT_PUBLIC_IMG_ENDPOINT + image.thumb} alt="Image" className="w-full h-auto" />

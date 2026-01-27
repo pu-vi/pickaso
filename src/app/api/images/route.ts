@@ -3,8 +3,9 @@ import { prisma as db } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
   const userEmail = request.headers.get('x-user-email')
+  const userSub = request.headers.get('x-user-sub')
   
-  if (!userEmail) {
+  if (!userEmail || !userSub) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -16,7 +17,8 @@ export async function GET(request: NextRequest) {
   try {
     const images = await db.image.findMany({
       where: {
-        userEmail: userEmail
+        email: userEmail,
+        sub: userSub
       },
       orderBy: {
         createdAt: 'desc'
@@ -27,7 +29,8 @@ export async function GET(request: NextRequest) {
 
     const totalImages = await db.image.count({
       where: {
-        userEmail: userEmail
+        email: userEmail,
+        sub: userSub
       }
     })
 
