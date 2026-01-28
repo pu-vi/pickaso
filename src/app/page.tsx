@@ -2,6 +2,7 @@
 import AuthWrapper from '@/components/AuthWrapper'
 import Header from '@/components/Header'
 import ImageUpload from '@/components/ImageUpload'
+import PWAInstall from '@/components/PWAInstall'
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
             <ImageUpload />
           </div>
         </div>
+        <PWAInstall />
       </div>
     </AuthWrapper>
   )

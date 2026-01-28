@@ -13,8 +13,29 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pickaso",
-  description: "Image upload and management app",
+  title: "Pickaso - Image Upload & Management",
+  description: "Upload and manage your images with ease",
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" }
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
+    ]
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Pickaso"
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false
+  }
 };
 
 export default function RootLayout({
@@ -26,6 +47,11 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <meta name="theme-color" content="#2563eb" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <link rel="manifest" href="/manifest.json" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
