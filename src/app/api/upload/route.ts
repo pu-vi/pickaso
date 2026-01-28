@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   const userEmail = request.headers.get('x-user-email')
   const userSub = request.headers.get('x-user-sub')
   
-  console.log('Headers received:', { userEmail, userSub })
+  console.log('Headers received - email present:', !!userEmail, 'sub present:', !!userSub)
   
   if (!userEmail) {
     console.log('Missing userEmail header')

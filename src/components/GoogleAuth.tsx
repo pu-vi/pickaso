@@ -30,7 +30,7 @@ export default function GoogleAuth() {
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
         callback: (response: { credential: string }) => {
           const payload = JSON.parse(atob(response.credential.split(".")[1]));
-          console.log("Google OAuth Payload:", payload);
+          console.log("Google OAuth login successful");
           login({
             email: payload.email,
             name: payload.name,

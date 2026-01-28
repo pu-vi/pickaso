@@ -11,14 +11,15 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url)
   const page = parseInt(searchParams.get('page') || '1', 10)
-  const limit = 10
+  const limit = 20
   const offset = (page - 1) * limit
 
   try {
     const images = await db.image.findMany({
       where: {
         email: userEmail,
-        sub: userSub
+        sub: userSub,
+        active: true
       },
       orderBy: {
         createdAt: 'desc'
@@ -30,7 +31,8 @@ export async function GET(request: NextRequest) {
     const totalImages = await db.image.count({
       where: {
         email: userEmail,
-        sub: userSub
+        sub: userSub,
+        active: true
       }
     })
 
