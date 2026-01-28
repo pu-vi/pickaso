@@ -20,6 +20,7 @@ model Image {
   title     String
   email     String
   sub       String
+  active    Boolean  @default(true)
   createdAt DateTime @default(now())
 }
 

@@ -18,7 +18,8 @@ export async function GET(request: NextRequest) {
     const images = await db.image.findMany({
       where: {
         email: userEmail,
-        sub: userSub
+        sub: userSub,
+        active: true
       },
       orderBy: {
         createdAt: 'desc'
@@ -30,7 +31,8 @@ export async function GET(request: NextRequest) {
     const totalImages = await db.image.count({
       where: {
         email: userEmail,
-        sub: userSub
+        sub: userSub,
+        active: true
       }
     })
 

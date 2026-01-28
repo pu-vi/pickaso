@@ -72,6 +72,10 @@ export default function ImageUpload() {
     }
   }
 
+  const handleDelete = (imageId: number) => {
+    setImages(images.filter(img => img.id !== imageId))
+  }
+
   return (
     <div className="space-y-4">
       {/* Upload Buttons */}
@@ -174,7 +178,8 @@ export default function ImageUpload() {
       {selectedImage && (
         <Lightbox 
           image={selectedImage} 
-          onClose={() => setSelectedImage(null)} 
+          onClose={() => setSelectedImage(null)}
+          onDelete={handleDelete}
         />
       )}
     </div>
