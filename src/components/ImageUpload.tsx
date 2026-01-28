@@ -121,8 +121,14 @@ export default function ImageUpload() {
 
       {/* Upload Status */}
       {uploading && (
-        <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded text-center">
-          Uploading images...
+        <div className="bg-gray-800 border border-gray-600 rounded-lg p-4">
+          <div className="flex items-center space-x-3">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+            <span className="text-white">Uploading images...</span>
+          </div>
+          <div className="mt-3 bg-gray-700 rounded-full h-2">
+            <div className="bg-blue-500 h-2 rounded-full animate-pulse" style={{width: '60%'}}></div>
+          </div>
         </div>
       )}
 
