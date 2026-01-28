@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       uploadFormData.append('image', new Blob([new Uint8Array(buffer)], { type: file.type }), randomName)
       uploadFormData.append('thumbnail', new Blob([new Uint8Array(thumbBuffer)], { type: 'image/jpeg' }), randomName)
 
-      const response = await fetch(process.env.NEXT_PUBLIC_UPLOAD_ENDPOINT!, {
+      const response = await fetch(process.env.UPLOAD_ENDPOINT!, {
         method: 'POST',
         body: uploadFormData
       })
