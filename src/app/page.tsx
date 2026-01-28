@@ -7,12 +7,10 @@ import PWAInstall from '@/components/PWAInstall'
 export default function Home() {
   return (
     <AuthWrapper>
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-gray-900">
         <Header />
-        <div className="p-8">
-          <div className="max-w-4xl mx-auto">
-            <ImageUpload />
-          </div>
+        <div className="p-4 max-w-md mx-auto">
+          <ImageUpload />
         </div>
         <PWAInstall />
       </div>
