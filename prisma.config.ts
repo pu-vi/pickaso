@@ -1,7 +1,11 @@
 import { defineConfig, env } from "prisma/config";
 import { loadEnvFile } from "process";
 
-loadEnvFile();
+try {
+  loadEnvFile();
+} catch {
+  // .env file not found - this is expected in production/deployment environments
+}
 
 export default defineConfig({
   datasource: {
